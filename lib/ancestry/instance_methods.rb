@@ -27,7 +27,7 @@ module Ancestry
         end
       end
     end
-     
+
     # Apply orphan strategy
     def apply_orphan_strategy
       # Skip this if callbacks are disabled
@@ -82,7 +82,7 @@ module Ancestry
     end
 
     def ancestors depth_options = {}
-      self.base_class.scope_depth(depth_options, depth).ordered_by_ancestry.scoped :conditions => ancestor_conditions
+      self.base_class.scope_depth(depth_options, depth).ordered_by_ancestry.where ancestor_conditions
     end
 
     def path_ids
@@ -94,7 +94,7 @@ module Ancestry
     end
 
     def path depth_options = {}
-      self.base_class.scope_depth(depth_options, depth).ordered_by_ancestry.scoped :conditions => path_conditions
+      self.base_class.scope_depth(depth_options, depth).ordered_by_ancestry.where path_conditions
     end
 
     def depth
@@ -141,7 +141,7 @@ module Ancestry
     end
 
     def children
-      self.base_class.scoped :conditions => child_conditions
+      self.base_class.where child_conditions
     end
 
     def child_ids
@@ -162,7 +162,7 @@ module Ancestry
     end
 
     def siblings
-      self.base_class.scoped :conditions => sibling_conditions
+      self.base_class.where sibling_conditions
     end
 
     def sibling_ids
@@ -183,7 +183,7 @@ module Ancestry
     end
 
     def descendants depth_options = {}
-      self.base_class.ordered_by_ancestry.scope_depth(depth_options, depth).scoped :conditions => descendant_conditions
+      self.base_class.ordered_by_ancestry.scope_depth(depth_options, depth).where descendant_conditions
     end
 
     def descendant_ids depth_options = {}
@@ -196,7 +196,7 @@ module Ancestry
     end
 
     def subtree depth_options = {}
-      self.base_class.ordered_by_ancestry.scope_depth(depth_options, depth).scoped :conditions => subtree_conditions
+      self.base_class.ordered_by_ancestry.scope_depth(depth_options, depth).where subtree_conditions
     end
 
     def subtree_ids depth_options = {}
@@ -229,16 +229,16 @@ module Ancestry
     end
     def unscoped_descendants
       self.base_class.unscoped do
-        self.base_class.all(:conditions => descendant_conditions) 
+        self.base_class.all(:conditions => descendant_conditions)
       end
     end
-    
+
     # basically validates the ancestry, but also applied if validation is
     # bypassed to determine if chidren should be affected
     def sane_ancestry?
       ancestry.nil? || (ancestry.to_s =~ Ancestry::ANCESTRY_PATTERN && !ancestor_ids.include?(self.id))
     end
-    
+
     def unscoped_find id
       self.base_class.unscoped { self.base_class.find(id) }
     end
